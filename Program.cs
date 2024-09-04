@@ -6,8 +6,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        var cadeteria = new Cadeteria("Cadeteria Ejemplo", "123456789");
-        string rutaCorrecta = @"C:\Users\Usuario\OneDrive\Documentos\2024\Taller2\tl2-tp1-2024-LucianaKhalil\archivos\cadetes.csv";
+        var cadeteria = new Cadeteria("PedidosYa", "123456789");
+        string rutaCorrecta = @"C:\Users\Usuario\OneDrive\Documentos\2024\Taller2\tl2-tp1-2024-LucianaKhalil\archivos\cadetes.csv";//el @ para que se pueda leer barrra
         cadeteria.CargarCadetesDesdeCSV(rutaCorrecta);
 
 
@@ -75,17 +75,52 @@ class Program
 
     static void AsignarPedido(Cadeteria cadeteria)
     {
-        Console.WriteLine("Funcionalidad pendiente...");
+        Console.WriteLine("Asignando pedido...");
     }
 
-    static void CambiarEstadoPedido(Cadeteria cadeteria)
+        static void CambiarEstadoPedido(Cadeteria cadeteria)
+{
+    Console.WriteLine("Seleccione el ID del cadete para cambiar el estado de un pedido:");
+    foreach (var cadete in cadeteria.ListadoCadetes)
     {
-        Console.WriteLine("Funcionalidad pendiente...");
+        Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
+    }
+    int idCadete = int.Parse(Console.ReadLine());
+    Cadete cadeteSeleccionado = cadeteria.ObtenerCadetePorId(idCadete);
+
+    Console.WriteLine("Seleccione el número del pedido para cambiar su estado:");
+    foreach (var pedido in cadeteSeleccionado.ListadoPedidos)
+    {
+        Console.WriteLine($"Pedido Nro: {pedido.Nro}, Estado: {pedido.Estado}");
+    }
+    int nroPedido = int.Parse(Console.ReadLine());
+    
+    Pedido pedidoSeleccionado = null;
+
+    foreach (var pedido in cadeteSeleccionado.ListadoPedidos)
+    {
+        if (pedido.Nro == nroPedido)
+        {
+            pedidoSeleccionado = pedido;
+            break; 
+        }
     }
 
+    if (pedidoSeleccionado != null)
+    {
+        Console.WriteLine("Ingrese el nuevo estado del pedido:");
+        string nuevoEstado = Console.ReadLine();
+        pedidoSeleccionado.CambiarEstado(nuevoEstado);
+        Console.WriteLine($"Estado del pedido {nroPedido} cambiado a {nuevoEstado}");
+    }
+    else
+    {
+        Console.WriteLine("Pedido no encontrado.");
+    }
+}
     static void ReasignarPedido(Cadeteria cadeteria)
     {
-        Console.WriteLine("Funcionalidad pendiente...");
+        Console.WriteLine("Reasignando pedido...");
     }
 }
 
