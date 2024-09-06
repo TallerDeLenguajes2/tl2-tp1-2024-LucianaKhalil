@@ -10,7 +10,8 @@ namespace SistemaCadeteria
         public string Nombre { get; set; }
         public string Telefono { get; set; }
         public List<Cadete> ListadoCadetes { get; set; }
-
+        
+        public List<Pedido> ListadoPedidos { get; set; }//mover a cadeteria
         public Cadeteria(string nombre, string telefono)
         {
             Nombre = nombre;
@@ -44,6 +45,29 @@ namespace SistemaCadeteria
             }
             return null;//si no ecnuentra ninguno
         }
+        public void AsignarPedido(Pedido pedido)
+        {
+            ListadoPedidos.Add(pedido);
+        }
+        
+        public void AsignarID(Pedido pedido, int idCADETE){//
+            pedido.idCadete=idCADETE;
+        }
+
+        public void ReasignarPedido(Pedido pedido, int idNuevoCadete)
+        {
+            if (pedido.idCadete==idNuevoCadete)
+            {
+                ListadoPedidos.Remove(pedido);
+
+            }
+        }
+        
+        public float JornalACobrar()
+        {
+            return ListadoPedidos.Count(p => p.Estado.ToLower() == "entregado") * 500;
+        }
+
 
         public void MostrarInforme()
         {
@@ -52,7 +76,7 @@ namespace SistemaCadeteria
             {
                 // Contador de pedidos entregados
                     int pedidosEntregados = 0;
-                    foreach (var pedido in cadete.ListadoPedidos)
+                    foreach (var pedido in ListadoPedidos)
                     {
                         if (pedido.Estado.ToLower() == "entregado")
                         {
@@ -69,7 +93,7 @@ namespace SistemaCadeteria
             int sumaDeEnvios = 0;
             foreach (Cadete cadete in ListadoCadetes)//se que esto se puede hacer mas corto pero no entiendo como
             {
-                sumaDeEnvios += cadete.ListadoPedidos.Count;
+                sumaDeEnvios += ListadoPedidos.Count;
             }
             double promedioDeEnvios = (double)sumaDeEnvios / ListadoCadetes.Count;
 

@@ -59,7 +59,7 @@ class Program
         string telefonoCliente = Console.ReadLine();
         Console.WriteLine("Ingrese datos de referencia para la dirección del cliente:");
         string datosReferenciaDireccion = Console.ReadLine();
-
+        
         Cliente cliente = new Cliente(nombreCliente, direccionCliente, telefonoCliente, datosReferenciaDireccion);
         Pedido pedido = new Pedido(nro, obs, cliente);
 
@@ -69,8 +69,8 @@ class Program
             Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
         }
         int idCadete = int.Parse(Console.ReadLine());
-        Cadete cadeteAsignado = cadeteria.ObtenerCadetePorId(idCadete);
-        cadeteAsignado.AsignarPedido(pedido);
+        cadeteria.AsignarID(pedido, idCadete);
+        cadeteria.AsignarPedido(pedido);
     }
 
     static void AsignarPedido(Cadeteria cadeteria)
@@ -89,7 +89,7 @@ class Program
     Cadete cadeteSeleccionado = cadeteria.ObtenerCadetePorId(idCadete);
 
     Console.WriteLine("Seleccione el número del pedido para cambiar su estado:");
-    foreach (var pedido in cadeteSeleccionado.ListadoPedidos)
+    foreach (var pedido in cadeteria.ListadoPedidos)
     {
         Console.WriteLine($"Pedido Nro: {pedido.Nro}, Estado: {pedido.Estado}");
     }
@@ -97,7 +97,7 @@ class Program
     
     Pedido pedidoSeleccionado = null;
 
-    foreach (var pedido in cadeteSeleccionado.ListadoPedidos)
+    foreach (var pedido in cadeteria.ListadoPedidos)
     {
         if (pedido.Nro == nroPedido)
         {
