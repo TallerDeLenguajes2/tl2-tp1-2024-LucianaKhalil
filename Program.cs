@@ -45,7 +45,7 @@ class Program
         }
     }
 
-    static void AltaPedido(Cadeteria cadeteria)
+static void AltaPedido(Cadeteria cadeteria)
     {
         Console.WriteLine("Ingrese el número del pedido:");
         int nro = int.Parse(Console.ReadLine());
@@ -69,59 +69,142 @@ class Program
             Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
         }
         int idCadete = int.Parse(Console.ReadLine());
-        cadeteria.AsignarID(pedido, idCadete);
         cadeteria.AsignarPedido(pedido);
+        cadeteria.AsignarCadeteAPedido(pedido, idCadete);
+        
     }
 
-    static void AsignarPedido(Cadeteria cadeteria)
-    {
-        Console.WriteLine("Asignando pedido...");
-    }
-
-        static void CambiarEstadoPedido(Cadeteria cadeteria)
+static void AsignarPedido(Cadeteria cadeteria)
 {
-    Console.WriteLine("Seleccione el ID del cadete para cambiar el estado de un pedido:");
+    // Mostrar todos los pedidos sin asignar cadete
+    Console.WriteLine("Seleccione el número del pedido para asignar un cadete:");
+    foreach (var pedido in cadeteria.ListadoPedidos)
+    {
+        if (pedido.idCadete == 0) // Asumiendo que un pedido sin cadete tiene idCadete = 0
+        {
+            Console.WriteLine($"Pedido Nro: {pedido.Nro}, Observación: {pedido.Obs}");
+        }
+    }
+    int nroPedido = int.Parse(Console.ReadLine());
+
+    // Buscar el pedido seleccionado
+    Pedido pedidoSeleccionado = cadeteria.ListadoPedidos.FirstOrDefault(p => p.Nro == nroPedido);
+
+    if (pedidoSeleccionado == null)
+    {
+        Console.WriteLine("Pedido no encontrado.");
+        return;
+    }
+
+    // Mostrar lista de cadetes
+    Console.WriteLine("Seleccione el ID del cadete para asignar al pedido:");
     foreach (var cadete in cadeteria.ListadoCadetes)
     {
         Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
     }
     int idCadete = int.Parse(Console.ReadLine());
-    Cadete cadeteSeleccionado = cadeteria.ObtenerCadetePorId(idCadete);
 
-    Console.WriteLine("Seleccione el número del pedido para cambiar su estado:");
-    foreach (var pedido in cadeteria.ListadoPedidos)
-    {
-        Console.WriteLine($"Pedido Nro: {pedido.Nro}, Estado: {pedido.Estado}");
-    }
-    int nroPedido = int.Parse(Console.ReadLine());
-    
-    Pedido pedidoSeleccionado = null;
+    // Intentar asignar el cadete al pedido
+    bool asignado = cadeteria.AsignarCadeteAPedido(pedidoSeleccionado, idCadete);
 
-    foreach (var pedido in cadeteria.ListadoPedidos)
+    if (asignado)
     {
-        if (pedido.Nro == nroPedido)
-        {
-            pedidoSeleccionado = pedido;
-            break; 
-        }
-    }
-
-    if (pedidoSeleccionado != null)
-    {
-        Console.WriteLine("Ingrese el nuevo estado del pedido:");
-        string nuevoEstado = Console.ReadLine();
-        pedidoSeleccionado.CambiarEstado(nuevoEstado);
-        Console.WriteLine($"Estado del pedido {nroPedido} cambiado a {nuevoEstado}");
+        Console.WriteLine("Cadete asignado correctamente al pedido.");
     }
     else
     {
-        Console.WriteLine("Pedido no encontrado.");
+        Console.WriteLine("Error al asignar el cadete al pedido.");
     }
 }
-    static void ReasignarPedido(Cadeteria cadeteria)
+
+
+static void CambiarEstadoPedido(Cadeteria cadeteria)
+        {
+            Console.WriteLine("Seleccione el ID del cadete para cambiar el estado de un pedido:");
+            foreach (var cadete in cadeteria.ListadoCadetes)
+            {
+                Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
+            }
+            int idCadete = int.Parse(Console.ReadLine());
+            Cadete cadeteSeleccionado = cadeteria.ObtenerCadetePorId(idCadete);
+
+            Console.WriteLine("Seleccione el número del pedido para cambiar su estado:");
+            foreach (var pedido in cadeteria.ListadoPedidos)
+            {
+                Console.WriteLine($"Pedido Nro: {pedido.Nro}, Estado: {pedido.Estado}");
+            }
+            int nroPedido = int.Parse(Console.ReadLine());
+            
+            Pedido pedidoSeleccionado = null;
+
+            foreach (var pedido in cadeteria.ListadoPedidos)
+            {
+                if (pedido.Nro == nroPedido)
+                {
+                    pedidoSeleccionado = pedido;
+                    break; 
+                }
+            }
+
+            if (pedidoSeleccionado != null)
+            {
+                Console.WriteLine("Ingrese el nuevo estado del pedido:");
+                string nuevoEstado = Console.ReadLine();
+                pedidoSeleccionado.CambiarEstado(nuevoEstado);
+                Console.WriteLine($"Estado del pedido {nroPedido} cambiado a {nuevoEstado}");
+            }
+            else
+            {
+                Console.WriteLine("Pedido no encontrado.");
+            }
+        }
+static void ReasignarPedido(Cadeteria cadeteria)
+{
+    // Mostrar todos los pedidos con cadete asignado
+    Console.WriteLine("Seleccione el número del pedido que desea reasignar:");
+    foreach (var pedido in cadeteria.ListadoPedidos)
     {
-        Console.WriteLine("Reasignando pedido...");
+        if (pedido.idCadete != 0) // Mostrar solo pedidos que ya tienen cadete
+        {
+            Console.WriteLine($"Pedido Nro: {pedido.Nro}, Estado: {pedido.Estado}, Cadete Asignado: {pedido.idCadete}");
+        }
     }
+    int nroPedido = int.Parse(Console.ReadLine());
+
+    // Buscar el pedido seleccionado
+    Pedido pedidoSeleccionado = cadeteria.ListadoPedidos.FirstOrDefault(p => p.Nro == nroPedido);
+
+    if (pedidoSeleccionado == null)
+    {
+        Console.WriteLine("Pedido no encontrado.");
+        return;
+    }
+
+    // Mostrar lista de cadetes disponibles
+    Console.WriteLine("Seleccione el ID del nuevo cadete para asignar al pedido:");
+    foreach (var cadete in cadeteria.ListadoCadetes)
+    {
+        if (cadete.Id != pedidoSeleccionado.idCadete) // Excluir al cadete actualmente asignado
+        {
+            Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
+        }
+    }
+    int idNuevoCadete = int.Parse(Console.ReadLine());
+
+    // Llamar a la función reasignar dd cadeteria.cs
+    bool reasignado = cadeteria.ReasignarPedido(pedidoSeleccionado, idNuevoCadete);
+
+    if (reasignado)
+    {
+        Console.WriteLine("Pedido reasignado correctamente.");
+    }
+    else
+    {
+        Console.WriteLine("Error al reasignar el pedido.");
+    }
+}
+
+
 }
 
 

@@ -17,6 +17,7 @@ namespace SistemaCadeteria
             Nombre = nombre;
             Telefono = telefono;
             ListadoCadetes = new List<Cadete>();
+            ListadoPedidos = new List<Pedido>(); // Inicializamos ListadoPedidos en cadeteria
         }
         public void CargarCadetesDesdeCSV(string archivoCadetes)
         {
@@ -50,22 +51,37 @@ namespace SistemaCadeteria
             ListadoPedidos.Add(pedido);
         }
         
-        public void AsignarID(Pedido pedido, int idCADETE){//
-            pedido.idCadete=idCADETE;
-        }
-
-        public void ReasignarPedido(Pedido pedido, int idNuevoCadete)
-        {
-            if (pedido.idCadete==idNuevoCadete)
+        public bool AsignarCadeteAPedido(Pedido pedido, int idCADETE){//
+            Cadete cadete = ObtenerCadetePorId(idCADETE); // Buscar el cadete por su ID
+            if (cadete != null && ListadoPedidos.Contains(pedido))
             {
-                ListadoPedidos.Remove(pedido);
-
+                pedido.idCadete = idCADETE; // Asignamos el cadete al pedido
+                return true; // Asignación exitosa
             }
+            return false; // Error en la asignación (cadete o pedido no encontrado)pedido.idCadete=idCADETE;
         }
-        
-        public float JornalACobrar()
+
+        public bool ReasignarPedido(Pedido pedido, int idNuevoCadete)
+{
+            // Verificamos si el pedido existe en la lista de pedidos
+            if (ListadoPedidos.Contains(pedido))
+            {
+                // Asignamos el nuevo ID del cadete al pedido
+                pedido.idCadete = idNuevoCadete;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+}
+
+        public float JornalACobrar(int idCADETE)
         {
-            return ListadoPedidos.Count(p => p.Estado.ToLower() == "entregado") * 500;
+            int pedidosEntregados = ListadoPedidos.Count(p => p.idCadete == idCADETE && p.Estado.ToLower() == "entregado");// La p es una variable de referencia que representa cada objeto de tipo Pedido en ListadoPedidos.
+            float jornal = pedidosEntregados * 500;
+
+            return jornal;
         }
 
 
