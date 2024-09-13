@@ -6,9 +6,30 @@ class Program
 {
     static void Main(string[] args)
     {
-        var cadeteria = new Cadeteria("PedidosYa", "123456789");
-        string rutaCorrecta = @"C:\Users\Usuario\OneDrive\Documentos\2024\Taller2\tl2-tp1-2024-LucianaKhalil\archivos\cadetes.csv";//el @ para que se pueda leer barrra
-        cadeteria.CargarCadetesDesdeCSV(rutaCorrecta);
+        AccesoADatos accesoDatos;
+
+        Console.WriteLine("Seleccione el tipo de acceso a datos:");
+        Console.WriteLine("1. CSV");
+        Console.WriteLine("2. JSON");
+        var opcion = Console.ReadLine();
+
+        if (opcion == "1")
+        {
+            string rutaCSV = @"../cadcsv";
+            accesoDatos = new AccesoCSV(rutaCSV);
+        }
+        else if (opcion == "2")
+        {
+            string rutaJSON = @"ruta_del_archivo_json";
+            accesoDatos = new AccesoJSON(rutaJSON);
+        }
+        else
+        {
+            Console.WriteLine("Opción no válida.");
+            return;
+        }
+
+        var cadetes = accesoDatos.CargarCadetes();
 
 
         while (true)
