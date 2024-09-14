@@ -19,23 +19,6 @@ namespace SistemaCadeteria
             ListadoCadetes = new List<Cadete>();
             ListadoPedidos = new List<Pedido>(); // Inicializamos ListadoPedidos en cadeteria
         }
-        public void CargarCadetesDesdeCSV(string archivoCadetes)
-        {
-            // Leemos todas las líneas del archivo CSV
-            var lineas = File.ReadAllLines(archivoCadetes);
-            
-            // Ignoramos la primera línea (el encabezado)
-            for (int i = 1; i < lineas.Length; i++)
-            {
-                var datos = lineas[i].Split(',');//separamos en las comas en cada linea
-                
-                // Creamos un nuevo objeto Cadete usando los datos del archivo
-                var cadete = new Cadete(int.Parse(datos[0]), datos[1], datos[2], datos[3]);
-                
-                // Agregamos el cadete a la lista de cadetes
-                ListadoCadetes.Add(cadete);
-            }
-        }
 
         public Cadete ObtenerCadetePorId(int id)
         {

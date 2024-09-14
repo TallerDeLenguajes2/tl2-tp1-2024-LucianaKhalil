@@ -1,27 +1,33 @@
 ﻿using System;
 using SistemaCadeteria;
 using System.Collections.Generic;
+using System.Linq; // Importar LINQ para usar FirstOrDefault
 
 class Program
 {
     static void Main(string[] args)
     {
-        AccesoADatos accesoDatos;
+         AccesoADatos accesoDatos = null; // Inicializamos la variable
 
         Console.WriteLine("Seleccione el tipo de acceso a datos:");
         Console.WriteLine("1. CSV");
         Console.WriteLine("2. JSON");
         var opcion = Console.ReadLine();
 
+        string rutaCadetes;
+        string rutaCadeteria;
+
         if (opcion == "1")
         {
-            string rutaCSV = @"../cadcsv";
-            accesoDatos = new AccesoCSV(rutaCSV);
+            rutaCadetes = @"C:/Users/Usuario/OneDrive/Documentos/2024/Taller2/tl2-tp1-2024-LucianaKhalil/archivos/cadetes.csv";
+            rutaCadeteria = @"C:/Users/Usuario/OneDrive/Documentos/2024/Taller2/tl2-tp1-2024-LucianaKhalil/archivos/cadeteria.csv";
+            accesoDatos = new AccesoCSV();
         }
         else if (opcion == "2")
         {
-            string rutaJSON = @"ruta_del_archivo_json";
-            accesoDatos = new AccesoJSON(rutaJSON);
+            rutaCadetes = @"C:/Users/Usuario/OneDrive/Documentos/2024/Taller2/tl2-tp1-2024-LucianaKhalil/archivos/cadetes.json";
+            rutaCadeteria = @"C:/Users/Usuario/OneDrive/Documentos/2024/Taller2/tl2-tp1-2024-LucianaKhalil/archivos/cadeteria.json";
+            accesoDatos = new AccesoJSON();
         }
         else
         {
@@ -29,8 +35,9 @@ class Program
             return;
         }
 
-        var cadetes = accesoDatos.CargarCadetes();
-
+        // Cargar datos
+        List<Cadete> cadetes = accesoDatos.CargarCadetes(rutaCadetes);
+        Cadeteria cadeteria = accesoDatos.CargarCadeteria(cadetes, rutaCadeteria);
 
         while (true)
         {
@@ -41,11 +48,11 @@ class Program
             Console.WriteLine("5. Mostrar informe de pedidos");
             Console.WriteLine("0. Salir");
 
-            var opcion = Console.ReadLine();
+            var opcionMenu = Console.ReadLine();
 
-            if (opcion == "0") break;
+            if (opcionMenu == "0") break;
 
-            switch (opcion)
+            switch (opcionMenu)
             {
                 case "1":
                     AltaPedido(cadeteria);
