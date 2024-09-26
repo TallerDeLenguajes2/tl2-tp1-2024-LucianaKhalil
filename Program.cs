@@ -14,8 +14,9 @@ class Program
         Console.WriteLine("2. JSON");
         var opcion = Console.ReadLine();
 
-        string rutaCadetes;
-        string rutaCadeteria;
+        string rutaCadetes = "";
+        string rutaCadeteria = "";
+
 
         if (opcion == "1")
         {
@@ -67,39 +68,45 @@ class Program
                     ReasignarPedido(cadeteria);
                     break;
                 case "5":
-                    cadeteria.MostrarInforme();
+                    cadeteria.ObtenerInformeCadetes();
                     break;
             }
         }
     }
 
-static void AltaPedido(Cadeteria cadeteria)
+    static void AltaPedido(Cadeteria cadeteria)
     {
         Console.WriteLine("Ingrese el número del pedido:");
-        int nro = int.Parse(Console.ReadLine());
+        int nroPedido = int.Parse(Console.ReadLine());
+
         Console.WriteLine("Ingrese la observación del pedido:");
-        string obs = Console.ReadLine();
+        string observacion = Console.ReadLine();
+
+        // Captura de datos del cliente
         Console.WriteLine("Ingrese el nombre del cliente:");
         string nombreCliente = Console.ReadLine();
+
         Console.WriteLine("Ingrese la dirección del cliente:");
         string direccionCliente = Console.ReadLine();
+
         Console.WriteLine("Ingrese el teléfono del cliente:");
         string telefonoCliente = Console.ReadLine();
-        Console.WriteLine("Ingrese datos de referencia para la dirección del cliente:");
-        string datosReferenciaDireccion = Console.ReadLine();
-        
-        Cliente cliente = new Cliente(nombreCliente, direccionCliente, telefonoCliente, datosReferenciaDireccion);
-        Pedido pedido = new Pedido(nro, obs, cliente);
 
-        Console.WriteLine("Seleccione el ID del cadete para asignar el pedido:");
-        foreach (var cadete in cadeteria.ListadoCadetes)
-        {
-            Console.WriteLine($"{cadete.Id}. {cadete.Nombre}");
-        }
-        int idCadete = int.Parse(Console.ReadLine());
-        cadeteria.AsignarPedido(pedido);
-        cadeteria.AsignarCadeteAPedido(pedido, idCadete);
-        
+        Console.WriteLine("Ingrese datos de referencia para la dirección:");
+        string referenciaCliente = Console.ReadLine();
+
+        // Crear un nuevo cliente directamente
+        Cliente clienteNuevo = new Cliente(nombreCliente, direccionCliente, telefonoCliente, referenciaCliente);
+
+        Console.WriteLine("Ingrese el estado del pedido (Ej. Pendiente, En Proceso, Entregado):");
+        string estado = Console.ReadLine();
+
+        // Crear un nuevo pedido
+        Pedido nuevoPedido = new Pedido(nroPedido, observacion, clienteNuevo, estado);
+
+        // Agregar el nuevo pedido a la lista de pedidos en Cadeteria
+        cadeteria.ListadoPedidos.Add(nuevoPedido);
+        Console.WriteLine($"Pedido Nro {nroPedido} creado con éxito.");
     }
 
 static void AsignarPedido(Cadeteria cadeteria)
@@ -133,7 +140,7 @@ static void AsignarPedido(Cadeteria cadeteria)
     int idCadete = int.Parse(Console.ReadLine());
 
     // Intentar asignar el cadete al pedido
-    bool asignado = cadeteria.AsignarCadeteAPedido(pedidoSeleccionado, idCadete);
+    bool asignado = cadeteria.AsignarCadeteAPedido(nroPedido, idCadete);
 
     if (asignado)
     {
@@ -220,7 +227,7 @@ static void ReasignarPedido(Cadeteria cadeteria)
     int idNuevoCadete = int.Parse(Console.ReadLine());
 
     // Llamar a la función reasignar dd cadeteria.cs
-    bool reasignado = cadeteria.ReasignarPedido(pedidoSeleccionado, idNuevoCadete);
+    bool reasignado = cadeteria.ReasignarPedido(nroPedido, idNuevoCadete);
 
     if (reasignado)
     {
@@ -231,7 +238,6 @@ static void ReasignarPedido(Cadeteria cadeteria)
         Console.WriteLine("Error al reasignar el pedido.");
     }
 }
-
 
 }
 

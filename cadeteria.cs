@@ -29,35 +29,32 @@ namespace SistemaCadeteria
             }
             return null;//si no ecnuentra ninguno
         }
-        public void AsignarPedido(Pedido pedido)
-        {
-            ListadoPedidos.Add(pedido);
-        }
         
-        public bool AsignarCadeteAPedido(Pedido pedido, int idCADETE){//
-            Cadete cadete = ObtenerCadetePorId(idCADETE); // Buscar el cadete por su ID
-            if (cadete != null && ListadoPedidos.Contains(pedido))
-            {
-                pedido.idCadete = idCADETE; // Asignamos el cadete al pedido
-                return true; // Asignación exitosa
-            }
-            return false; // Error en la asignación (cadete o pedido no encontrado)pedido.idCadete=idCADETE;
-        }
+        public bool AsignarCadeteAPedido(int nroPedido, int idCadete){
+            var cadete = ListadoCadetes.FirstOrDefault(c => c.Id == idCadete);
+            var pedido = ListadoPedidos.FirstOrDefault(p => p.Nro == nroPedido);
 
-        public bool ReasignarPedido(Pedido pedido, int idNuevoCadete)
-{
-            // Verificamos si el pedido existe en la lista de pedidos
-            if (ListadoPedidos.Contains(pedido))
+            if (cadete != null && pedido != null)
             {
-                // Asignamos el nuevo ID del cadete al pedido
-                pedido.idCadete = idNuevoCadete;
+                pedido.idCadete = idCadete; // Asigna el cadete al pedido
+                pedido.Estado = "asignado"; // Cambia el estado del pedido a "asignado"
                 return true;
             }
-            else
+            return false; // Retorna false si no se encuentra el cadete o pedido
+        }
+        
+         
+
+        public bool ReasignarPedido(int nroPedido, int idNuevoCadete){
+            var pedido = ListadoPedidos.FirstOrDefault(p => p.Nro == nroPedido);
+
+            if (pedido != null)
             {
-                return false;
+                pedido.idCadete = idNuevoCadete; // Reasigna el pedido al nuevo cadete
+                return true;
             }
-}
+            return false;
+        }
 
         public float JornalACobrar(int idCADETE)
         {
@@ -68,36 +65,36 @@ namespace SistemaCadeteria
         }
 
 
-        public void MostrarInforme()
+        public List<string> ObtenerInformeCadetes()
+        {
+            List<string> informes = new List<string>();
+            foreach (var cadete in ListadoCadetes)
+            {
+                int pedidosEntregados = ListadoPedidos.Count(p => p.idCadete == cadete.Id && p.Estado.ToLower() == "entregado");
+                float jornal = pedidosEntregados * 500;
+                informes.Add($"Cadete {cadete.Nombre} - Pedidos Entregados: {pedidosEntregados}, Jornal: ${jornal}");
+            }
+            return informes;
+        }
+
+        public double CalcularPromedioEnvios()
+        {
+            if (ListadoCadetes.Count == 0) return 0;
+
+            int sumaDeEnvios = ListadoPedidos.Count;
+            double promedioDeEnvios = (double)sumaDeEnvios / ListadoCadetes.Count;
+            return promedioDeEnvios;
+        }
+
+        public float CalcularTotalGanadoPorTodos()
         {
             float totalGanado = 0;
             foreach (var cadete in ListadoCadetes)
             {
-                // Contador de pedidos entregados
-                    int pedidosEntregados = 0;
-                    foreach (var pedido in ListadoPedidos)
-                    {
-                        if (pedido.Estado.ToLower() == "entregado")
-                        {
-                            pedidosEntregados++;
-                        }
-                    }
-
-                // Calcular el jornal a cobrar
-                var jornal = pedidosEntregados * 500;
-                Console.WriteLine($"Cadete {cadete.Nombre} - Pedidos Entregados: {pedidosEntregados}, Jornal: ${jornal}");
-                totalGanado += jornal;
+                int pedidosEntregados = ListadoPedidos.Count(p => p.idCadete == cadete.Id && p.Estado.ToLower() == "entregado");
+                totalGanado += pedidosEntregados * 500;
             }
-            Console.WriteLine($"Total Ganado por todos los cadetes: ${totalGanado}");
-            int sumaDeEnvios = 0;
-            foreach (Cadete cadete in ListadoCadetes)//se que esto se puede hacer mas corto pero no entiendo como
-            {
-                sumaDeEnvios += ListadoPedidos.Count;
-            }
-            double promedioDeEnvios = (double)sumaDeEnvios / ListadoCadetes.Count;
-
-            Console.WriteLine("Cantidad promedio de envíos por cadete: " + promedioDeEnvios);
-
+            return totalGanado;
         }
     }
 }

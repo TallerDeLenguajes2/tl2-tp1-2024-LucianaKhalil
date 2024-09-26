@@ -8,6 +8,7 @@ namespace SistemaCadeteria
         public string Estado { get; set; }
         
         public int idCadete { get; set; }//referencia a cadete 
+        
 
         public Pedido(int nro, string obs, Cliente cliente, string estado = "pendiente")
         {
